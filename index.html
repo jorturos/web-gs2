@@ -1299,31 +1299,33 @@ body.menu-open { overflow: hidden; }
 
 /* ─── ENTRY ANIMATION (Hero) ────────────────────────────────────── */
 @keyframes hero-rise {
-  from { clip-path: inset(0 0 100% 0); transform: translateY(0.12em); }
-  to   { clip-path: inset(0 0 -0.06em 0); transform: translateY(0); }
+  from { clip-path: inset(0 0 100% 0); transform: translateY(0.15em); }
+  to   { clip-path: inset(0 0 -0.1em 0); transform: translateY(0); }
 }
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
 .hero__title .line__inner {
-  animation: hero-rise 1.05s var(--ease-out) both;
+  display: block;
+  animation: hero-rise 0.95s var(--ease-out) backwards;
 }
-.hero__title .line:nth-child(1) .line__inner { animation-delay: 0.10s; }
-.hero__title .line:nth-child(2) .line__inner { animation-delay: 0.22s; }
-.hero__title .line:nth-child(3) .line__inner { animation-delay: 0.34s; }
-.hero__title .line:nth-child(4) .line__inner { animation-delay: 0.46s; }
+.hero__title .line:nth-child(1) .line__inner { animation-delay: 0.08s; }
+.hero__title .line:nth-child(2) .line__inner { animation-delay: 0.20s; }
+.hero__title .line:nth-child(3) .line__inner { animation-delay: 0.32s; }
+.hero__title .line:nth-child(4) .line__inner { animation-delay: 0.44s; }
 
 .hero__top,
 .hero__divider,
 .hero__actions,
 .hero__metrics {
-  animation: fade-up 0.9s var(--ease-out) both;
+  animation: fade-up 0.80s var(--ease-out) backwards;
 }
-.hero__top      { animation-delay: 0.05s; }
-.hero__divider  { animation-delay: 0.65s; }
-.hero__actions  { animation-delay: 0.78s; }
-.hero__metrics  { animation-delay: 0.92s; }
+.hero__top      { animation-delay: 0.04s; }
+.hero__divider  { animation-delay: 0.62s; }
+.hero__actions  { animation-delay: 0.74s; }
+.hero__metrics  { animation-delay: 0.86s; }
 
 /* In-view reveals */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
