@@ -208,7 +208,7 @@ body {
 .mobile-menu {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: 90;
   background: var(--bg);
   display: flex;
   flex-direction: column;
@@ -222,22 +222,29 @@ body {
   opacity: 1;
   pointer-events: auto;
 }
-.mobile-menu__close {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 48px;
-  height: 48px;
-  background: transparent;
-  border: 0;
-  color: var(--text-2);
-  cursor: pointer;
-  display: inline-flex;
+
+/* Hamburguesa → X en el mismo sitio */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: color 180ms var(--ease-out);
+  gap: 5px;
 }
-.mobile-menu__close:hover { color: var(--text); }
+.menu-toggle .bar-top,
+.menu-toggle .bar-bot {
+  display: block;
+  width: 18px;
+  height: 1.2px;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 300ms var(--ease-out);
+  transform-origin: center;
+}
+body.menu-open .site-header { z-index: 110; }
+body.menu-open .menu-toggle { z-index: 111; }
+body.menu-open .menu-toggle .bar-top { transform: translateY(3.1px) rotate(45deg); }
+body.menu-open .menu-toggle .bar-bot { transform: translateY(-3.1px) rotate(-45deg); }
 .mobile-menu__nav {
   display: flex;
   flex-direction: column;
@@ -252,8 +259,20 @@ body {
   color: var(--text-2);
   letter-spacing: -0.01em;
   line-height: 1;
-  transition: color 200ms var(--ease-out);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: color 200ms var(--ease-out), opacity 200ms var(--ease-out), transform 200ms var(--ease-out);
 }
+.mobile-menu.is-open .mobile-menu__nav a {
+  opacity: 1;
+  transform: translateY(0);
+  transition: color 200ms var(--ease-out), opacity 400ms var(--ease-out), transform 400ms var(--ease-out);
+}
+.mobile-menu.is-open .mobile-menu__nav a:nth-child(1) { transition-delay: 80ms; }
+.mobile-menu.is-open .mobile-menu__nav a:nth-child(2) { transition-delay: 140ms; }
+.mobile-menu.is-open .mobile-menu__nav a:nth-child(3) { transition-delay: 200ms; }
+.mobile-menu.is-open .mobile-menu__nav a:nth-child(4) { transition-delay: 260ms; }
+.mobile-menu.is-open .mobile-menu__nav a:nth-child(5) { transition-delay: 320ms; }
 .mobile-menu__nav a:hover,
 .mobile-menu__nav a.is-active { color: var(--text); }
 body.menu-open { overflow: hidden; }
@@ -513,8 +532,37 @@ body.menu-open { overflow: hidden; }
 .btn:hover .arrow { transform: translateX(3px); }
 
 /* ─── HERO METRICS ──────────────────────────────────────────────── */
+/* Scroll hint — solo visible en mobile via media query */
+.hero__scroll-hint {
+  display: none;
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-3);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.hero__scroll-hint__line {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--accent-lt), transparent);
+  animation: scroll-line 1.6s var(--ease-out) infinite;
+  transform-origin: top;
+}
+@keyframes scroll-line {
+  0%   { transform: scaleY(0); opacity: 0; }
+  30%  { opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
+}
+
 .hero__metrics {
-  margin-top: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border-top: 0.5px solid var(--line);
@@ -1319,7 +1367,6 @@ body.menu-open { overflow: hidden; }
 .hero__title .line:nth-child(4) .line__inner { animation-delay: 0.46s; }
 .hero__divider  { animation: fade-up 0.9s var(--ease-out) both; animation-delay: 0.55s; }
 .hero__actions  { animation: fade-up 0.9s var(--ease-out) both; animation-delay: 0.68s; }
-.hero__metrics  { animation: fade-up 0.9s var(--ease-out) both; animation-delay: 0.80s; }
 
 /* In-view reveals */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
@@ -1429,12 +1476,22 @@ body.menu-open { overflow: hidden; }
   .nav-primary { display: none; }
   .phone { display: none; }
   .cta-pill { display: none; }
-  .hero { min-height: 100svh; padding-top: calc(76px + clamp(16px, 2.5vw, 36px)); }
-  .menu-toggle {
-    display: inline-flex;
-    align-items: center;
+  .hero {
+    min-height: 100svh;
+    padding-top: 76px;
     justify-content: center;
-    width: 44px; height: 44px;
+  }
+  .hero .shell {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 80px;
+  }
+  .hero__scroll-hint { display: flex; }
+  .menu-toggle {
+    display: flex;
+    width: 44px;
+    height: 44px;
     background: transparent;
     border: 0.5px solid var(--line-2);
     border-radius: 999px;
@@ -1493,7 +1550,8 @@ body.menu-open { overflow: hidden; }
       </a>
       <a class="cta-pill" href="#contacto">Hablemos</a>
       <button class="menu-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
-        <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 5h12M2 11h12"/></svg>
+        <span class="bar-top"></span>
+        <span class="bar-bot"></span>
       </button>
     </div>
   </div>
@@ -1501,9 +1559,6 @@ body.menu-open { overflow: hidden; }
 
 <!-- Mobile fullscreen menu -->
 <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-  <button class="mobile-menu__close" aria-label="Cerrar menú">
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
-  </button>
   <nav class="mobile-menu__nav" aria-label="Menú principal">
     <a href="#" class="is-active">Inicio</a>
     <a href="#servicios">Servicios</a>
@@ -1548,28 +1603,36 @@ body.menu-open { overflow: hidden; }
       </a>
     </div>
 
-    <div class="hero__metrics" role="list">
-      <div class="hero__metric" role="listitem">
-        <div class="hero__metric-num">+20</div>
-        <div class="hero__metric-lbl">Años de trayectoria</div>
-      </div>
-      <div class="hero__metric" role="listitem">
-        <div class="hero__metric-num">+150</div>
-        <div class="hero__metric-lbl">Proyectos entregados</div>
-      </div>
-      <div class="hero__metric" role="listitem">
-        <div class="hero__metric-num">6</div>
-        <div class="hero__metric-lbl">Áreas de servicio</div>
-      </div>
-      <div class="hero__metric" role="listitem">
-        <div class="hero__metric-num">100%</div>
-        <div class="hero__metric-lbl">A medida</div>
-      </div>
+    <div class="hero__scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="hero__scroll-hint__line"></div>
     </div>
+
   </div>
+
 </section>
 
 </div><!-- /.hero-wrap -->
+
+<!-- ─── METRICS ──────────────────────────────────────────────────── -->
+<div class="hero__metrics reveal" role="list">
+  <div class="hero__metric" role="listitem">
+    <div class="hero__metric-num">+20</div>
+    <div class="hero__metric-lbl">Años de trayectoria</div>
+  </div>
+  <div class="hero__metric" role="listitem">
+    <div class="hero__metric-num">+150</div>
+    <div class="hero__metric-lbl">Proyectos entregados</div>
+  </div>
+  <div class="hero__metric" role="listitem">
+    <div class="hero__metric-num">6</div>
+    <div class="hero__metric-lbl">Áreas de servicio</div>
+  </div>
+  <div class="hero__metric" role="listitem">
+    <div class="hero__metric-num">100%</div>
+    <div class="hero__metric-lbl">A medida</div>
+  </div>
+</div>
 
 <!-- ─── NOSOTROS ───────────────────────────────────────────────── -->
 <section class="about" id="nosotros" aria-labelledby="about-title">
@@ -2233,26 +2296,29 @@ body.menu-open { overflow: hidden; }
     var toggle = document.querySelector('.menu-toggle');
     var menu = document.getElementById('mobile-menu');
     if (!toggle || !menu) return;
-    var closeBtn = menu.querySelector('.mobile-menu__close');
     var links = menu.querySelectorAll('.mobile-menu__nav a');
+    var isOpen = false;
 
     function open() {
+      isOpen = true;
       menu.classList.add('is-open');
       menu.setAttribute('aria-hidden', 'false');
       toggle.setAttribute('aria-expanded', 'true');
+      toggle.setAttribute('aria-label', 'Cerrar menú');
       document.body.classList.add('menu-open');
     }
     function close() {
+      isOpen = false;
       menu.classList.remove('is-open');
       menu.setAttribute('aria-hidden', 'true');
       toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-label', 'Abrir menú');
       document.body.classList.remove('menu-open');
     }
-    toggle.addEventListener('click', open);
-    closeBtn.addEventListener('click', close);
+    toggle.addEventListener('click', function () { isOpen ? close() : open(); });
     links.forEach(function (a) { a.addEventListener('click', close); });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && menu.classList.contains('is-open')) close();
+      if (e.key === 'Escape' && isOpen) close();
     });
   })();
 </script>
