@@ -1,0 +1,7 @@
+# Ignorar todo excepto index.html y logos
+*
+!.gitignore
+!index.html
+!assets/
+!assets/gs2-logo.png
+!assets/gs2-logo.svg
