@@ -8,6 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<script>
+  /* Marca el body como listo en cuanto el DOM está parseado,
+     garantizando que las animaciones del hero siempre arrancan desde el inicio */
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.classList.add('hero-ready');
+  });
+</script>
 
 <style>
 /* ─── RESET ─────────────────────────────────────────────────────── */
@@ -106,6 +113,7 @@ body {
   width: auto;
   display: block;
   transition: height 320ms var(--ease-out);
+  will-change: transform;
 }
 .site-header.is-scrolled .brand__logo { height: 44px; }
 .brand__suffix {
@@ -1307,25 +1315,26 @@ body.menu-open { overflow: hidden; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.hero__title .line__inner {
+/* Animations off by default — JS adds .hero-ready to <body> on DOMContentLoaded */
+.hero-ready .hero__title .line__inner {
   display: block;
   animation: hero-rise 0.95s var(--ease-out) backwards;
 }
-.hero__title .line:nth-child(1) .line__inner { animation-delay: 0.08s; }
-.hero__title .line:nth-child(2) .line__inner { animation-delay: 0.20s; }
-.hero__title .line:nth-child(3) .line__inner { animation-delay: 0.32s; }
-.hero__title .line:nth-child(4) .line__inner { animation-delay: 0.44s; }
+.hero-ready .hero__title .line:nth-child(1) .line__inner { animation-delay: 0.08s; }
+.hero-ready .hero__title .line:nth-child(2) .line__inner { animation-delay: 0.20s; }
+.hero-ready .hero__title .line:nth-child(3) .line__inner { animation-delay: 0.32s; }
+.hero-ready .hero__title .line:nth-child(4) .line__inner { animation-delay: 0.44s; }
 
-.hero__top,
-.hero__divider,
-.hero__actions,
-.hero__metrics {
+.hero-ready .hero__top,
+.hero-ready .hero__divider,
+.hero-ready .hero__actions,
+.hero-ready .hero__metrics {
   animation: fade-up 0.80s var(--ease-out) backwards;
 }
-.hero__top      { animation-delay: 0.04s; }
-.hero__divider  { animation-delay: 0.62s; }
-.hero__actions  { animation-delay: 0.74s; }
-.hero__metrics  { animation-delay: 0.86s; }
+.hero-ready .hero__top      { animation-delay: 0.04s; }
+.hero-ready .hero__divider  { animation-delay: 0.62s; }
+.hero-ready .hero__actions  { animation-delay: 0.74s; }
+.hero-ready .hero__metrics  { animation-delay: 0.86s; }
 
 /* In-view reveals */
 .reveal { opacity: 0; transform: translateY(18px); transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out); }
@@ -1346,7 +1355,9 @@ body.menu-open { overflow: hidden; }
     transition-duration: 0.001ms !important;
   }
   .reveal { opacity: 1; transform: none; }
-  .hero__title .line__inner { clip-path: none; transform: none; }
+  /* Con reduced-motion las líneas deben ser visibles aunque no haya animación */
+  .hero__title .line__inner { clip-path: inset(0 0 -0.1em 0) !important; transform: none !important; }
+  .hero__top, .hero__divider, .hero__actions, .hero__metrics { opacity: 1 !important; transform: none !important; }
   .case__img { transition: none; }
 }
 
